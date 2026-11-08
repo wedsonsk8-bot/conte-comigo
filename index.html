@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#176b57">
+<title>Conte Comigo</title>
+  <link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f2f7f4;color:#24352e;font-family:Arial,sans-serif}
+header{background:#176b57;color:white;text-align:center;padding:28px 15px;border-radius:0 0 24px 24px}
+header h1{font-size:32px;margin:0 0 8px}
+header p{font-size:18px;margin:0}
+main{max-width:600px;margin:auto;padding:18px}
+h2{font-size:23px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:white;border-radius:16px;padding:18px 10px;text-align:center;border:1px solid #dce9e1}
+.card span{font-size:34px}
+.card strong{display:block;font-size:19px;margin-top:9px}
+section{background:white;margin-top:20px;padding:18px;border-radius:16px}
+label{display:block;font-size:18px;margin:14px 0 7px}
+input,select{width:100%;padding:14px;font-size:18px;border:1px solid #b8c9bf;border-radius:10px;background:white}
+button{background:#176b57;color:white;border:0;border-radius:12px;padding:15px;font-size:18px;font-weight:bold;width:100%;margin-top:14px}
+button:active{opacity:.8}
+.item{padding:13px;border-bottom:1px solid #ddd;font-size:18px;display:flex;justify-content:space-between;gap:8px}
+.item button{width:auto;margin:0;padding:8px 12px;background:#b43c3c;font-size:14px}
+small{color:#66766d}
+</style>
+</head>
+<body>
+<header>
+<h1>Conte Comigo ❤️</h1>
+<p>Organizando seu dia com carinho.</p>
+</header>
+<main>
+<h2>O que vamos organizar hoje?</h2>
+<div class="cards">
+<div class="card"><span>💊</span><strong>Medicamentos</strong></div>
+<div class="card"><span>🍽️</span><strong>Refeições</strong></div>
+<div class="card"><span>💧</span><strong>Beber água</strong></div>
+<div class="card"><span>🌙</span><strong>Descanso</strong></div>
+</div>
+
+<section>
+<h2>Adicionar compromisso</h2>
+<label for="tipo">Tipo de atividade</label>
+<select id="tipo">
+<option>Medicamento</option>
+<option>Refeição</option>
+<option>Beber água</option>
+<option>Descanso</option>
+</select>
+<label for="nome">Nome ou descrição</label>
+<input id="nome" placeholder="Ex.: Remédio da manhã">
+<label for="hora">Horário</label>
+<input id="hora" type="time">
+<button onclick="adicionar()">Salvar compromisso</button>
+</section>
+
+<section>
+<h2>Minha rotina ❤️</h2>
+<div id="lista"><small>Seus compromissos aparecerão aqui.</small></div>
+</section>
+<p style="text-align:center;font-size:15px;margin:25px 0">Conte Comigo — cuidado e carinho todos os dias.</p>
+</main>
+<script>
+let rotina=JSON.parse(localStorage.getItem("rotinaConteComigo")||"[]");
+function mostrar(){
+const lista=document.getElementById("lista");
+lista.innerHTML="";
+if(!rotina.length){
+lista.innerHTML="<small>Seus compromissos aparecerão aqui.</small>";
+return;
+}
+rotina.sort((a,b)=>a.hora.localeCompare(b.hora));
+rotina.forEach((item,i)=>{
+const div=document.createElement("div");
+div.className="item";
+const texto=document.createElement("span");
+texto.textContent=item.hora+" — "+item.tipo+": "+item.nome;
+const btn=document.createElement("button");
+btn.textContent="Excluir";
+btn.onclick=()=>{rotina.splice(i,1);salvar()};
+div.append(texto,btn);
+lista.appendChild(div);
+});
+}
+function salvar(){
+localStorage.setItem("rotinaConteComigo",JSON.stringify(rotina));
+mostrar();
+}
+function adicionar(){
+const tipo=document.getElementById("tipo").value;
+const nome=document.getElementById("nome").value.trim();
+const hora=document.getElementById("hora").value;
+if(!nome||!hora){
+alert("Preencha a descrição e o horário.");
+return;
+}
+rotina.push({tipo,nome,hora});
+salvar();
+document.getElementById("nome").value="";
+document.getElementById("hora").value="";
+alert("Compromisso salvo!");
+}
+mostrar();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("Conte Comigo preparado!"))
+      .catch(error => console.log("Erro:", error));
+  });
+}
+</script></body>
+</html>
