@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#176b57">
 <title>Conte Comigo</title>
+  <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <style>
@@ -108,12 +110,29 @@ alert("Compromisso salvo!");
 mostrar();
 </script>
 <script>
-if ("serviceWorker" in navigator) {
+function pedirPermissao() {
+  if (!("Notification" in window)) {
+    alert("Seu navegador não suporta notificações.");
+    return;
+  }
+
+  Notification.requestPermission().then(permissao => {
+    if (permissao === "granted") {
+      alert("Notificações autorizadas!");
+    } else {
+      alert("A autorização não foi concedida.");
+    }
+  });
+}if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js")
       .then(() => console.log("Conte Comigo preparado!"))
       .catch(error => console.log("Erro:", error));
   });
 }
-</script></body>
+</script><div style="text-align:center; margin:20px;">
+  <button onclick="pedirPermissao()">
+    Ativar notificações
+  </button>
+</div></body>
 </html>
